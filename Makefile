@@ -1,10 +1,31 @@
-# Use g++ otherwise C++ stdlib is not linked in.
-CC=g++
+ifneq ("$(MAKECMDGOALS)", "clean")
+ifeq ("$(GOOGLE_TEST_HOME)", "")
+$(error "Please define GOOGLE_TEST_HOME, ie. `make GOOGLE_TEST_HOME=~/googletest-release-1.8.0'")
+endif
+endif
 
-ValueMapperTest : ValueMapperTest.o ValueMapper.o
+TARGET := test_const_map
 
-ValueMapper.o : ValueMapper.cpp ValueMapper.h
-ValueMapperTest.o : ValueMapperTest.cpp ValueMapper.h
+GMOCK_INCLUDE_PATH = $(GOOGLE_TEST_HOME)/googlemock
+GTEST_INCLUDE_PATH = $(GOOGLE_TEST_HOME)/googletest
+
+GMOCK_LIBRARY_PATH = $(GOOGLE_TEST_HOME)/googlemock
+GTEST_LIBRARY_PATH = $(GOOGLE_TEST_HOME)/googlemock/gtest
+
+# 'override' allows you to pass in extra flags when invoking `make', ie.
+# make CPPFLAGS=-std=c++14
+override CPPFLAGS += -std=c++98 -W -Wall -g -pthread -I $(GTEST_INCLUDE_PATH)/include -I $(GMOCK_INCLUDE_PATH)/include
+override LDFLAGS += -L$(GTEST_LIBRARY_PATH) -L$(GMOCK_LIBRARY_PATH)
+override LDLIBS += -lgtest_main -lgtest -lgmock
+
+.PHONY : all clean
+
+all: test
+
+$(TARGET): $(TARGET).cpp const_map.h
+
+test: $(TARGET)
+	./$<
 
 clean:
-	rm -rf *.o ValueMapperTest
+	rm -rf *.o $(TARGET)
