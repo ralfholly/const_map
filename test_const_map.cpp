@@ -9,39 +9,38 @@ namespace test_const_map {
 
 using namespace std;
 
+#define ASIZE(a) (sizeof(a) / sizeof((a)[0]))
+
 
 TEST(TestConstMap, Setup) {
     EXPECT_EQ(3, 1 + 2);
 }
 
-TEST(TestConstMap, Simple) {
-#define ASIZE(a) (sizeof(a) / sizeof((a)[0]))
-    const const_map<int, double>::value_type mappings[] = {
-        { 1, 1.11, },
-        { 2, 2.22, },
-        { 3, 3.33, },
-        { 4, 4.44, },
-        { 5, 5.55, }, };
 
-    const_map<int, double> mapper(mappings, ASIZE(mappings));
+TEST(TestConstMap, TypicalUseCases) {
+    const const_map<int, const char*>::value_type mappings[] = {
+        make_pair(0, "red"),
+        make_pair(1, "green"),
+        make_pair(2, "blue"),
+    };
 
-    const const_map<int, double>::Mapping* m = mapper.map_unchecked(4);
-    EXPECT_EQ(4.44, m->to);
+    const_map<int, const char*> my_map(mappings, ASIZE(mappings), "not found");
 
-    // m = mapper.map_unchecked(1);
-    // cout << "1 -> " << m->to << endl;
-    // 
-    // if ((m = mapper.map(5)) != 0) {
-    //     cout << "5 -> " << m->to << endl;
-    // }
+    // Simple lookup.
+    EXPECT_EQ("green", my_map[1]);
 
-    // if ((m = mapper.map(42)) != 0) {
-    //     cout << "42 -> " << m->to << endl;
-    // } else {
-    //     cout << "42 is not mapped" << endl;
-    // }
+    // Lookup via 'find'.
+    const_map<int, const char*>::iterator iter = my_map.find(2);
+    EXPECT_TRUE(iter != my_map.end());
+    EXPECT_EQ("blue", iter->second);
+
+    // No match found.
+    EXPECT_EQ(my_map.unmapped_value(), my_map[12345]);
+
+    // Lookup via 'find' doesn't find a match.
+    iter = my_map.find(12345);
+    EXPECT_TRUE(iter == my_map.end());
 }
-
 
 
 } // namespace test_const_map

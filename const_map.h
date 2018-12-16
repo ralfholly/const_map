@@ -8,32 +8,25 @@
 template <typename FROM, typename TO>
 class const_map {
 public:
-    struct Mapping {
-        FROM from;
-        TO to;
-        bool operator<(const FROM& from) const {
-            return (*this).from < from;
-        }
-    };
-    typedef struct Mapping value_type;
+    typedef std::pair<FROM, TO> value_type;
     typedef FROM key_type;
     typedef TO mapped_type;
     typedef const value_type* iterator;
 
-    inline const_map(const value_type* mappings, size_t length);
+    explicit inline const_map(const value_type* mappings, size_t length, const mapped_type& unmapped_value);
 
-    //inline const TO& operator[](const FROM& from) const;
-
-    inline const value_type* map_unchecked(const mapped_type& from) const;
-    inline const value_type* map(const mapped_type& from) const;
+    inline iterator find(const key_type& from) const;
+    inline const mapped_type& operator[](const key_type& from) const;
 
     inline iterator begin() const;
     inline iterator end() const;
     inline size_t size() const;
+    inline const mapped_type& unmapped_value() const;
 
 private:
     iterator mappings_;
     size_t length_;
+    const mapped_type& unmapped_value_;
 };
 
 
@@ -55,8 +48,17 @@ size_t const_map<FROM, TO>::size() const {
 }
 
 
+template<typename FROM, typename TO>
+const typename const_map<FROM, TO>::mapped_type& const_map<FROM, TO>::unmapped_value() const {
+    return unmapped_value_;
+}
+
+
 template <typename FROM, typename TO>
-inline const_map<FROM, TO>::const_map(const Mapping* mappings, size_t length) : mappings_(mappings), length_(length) { 
+inline const_map<FROM, TO>::const_map(const value_type* mappings, size_t length, const mapped_type& unmapped_value)
+    : mappings_(mappings)
+    , length_(length)
+    , unmapped_value_(unmapped_value) {
     assert(mappings != 0);
 #ifndef NDEBUG
     if (length >= 1) {
@@ -64,7 +66,7 @@ inline const_map<FROM, TO>::const_map(const Mapping* mappings, size_t length) : 
         iterator it = prev + 1;
         for (; it != end(); ++it, ++prev) {
             // Ensure that mapping keys are sorted and unique.
-            assert((*it).from > (*prev).from);
+            assert((*it).first > (*prev).first);
         }
     }
 #endif
@@ -72,19 +74,23 @@ inline const_map<FROM, TO>::const_map(const Mapping* mappings, size_t length) : 
 
 
 template <typename FROM, typename TO>
-const typename const_map<FROM, TO>::Mapping* const_map<FROM, TO>::map_unchecked(const mapped_type& from) const {
-    iterator it = std::lower_bound(mappings_, end(), from);
+const typename const_map<FROM, TO>::value_type* const_map<FROM, TO>::find(const key_type& from) const {
+    iterator it = std::lower_bound(begin(), end(), std::make_pair(from, TO()));
+    if (it == end() || (*it).first != from) {
+        return end();
+    }
     return it;
 }
 
 
 template <typename FROM, typename TO>
-const typename const_map<FROM, TO>::Mapping* const_map<FROM, TO>::map(const mapped_type& from) const {
-    iterator it = std::lower_bound(mappings_, end(), from);
-    if (it == end() || (*it).from != from) {
-        return end();
+const typename const_map<FROM, TO>::mapped_type& const_map<FROM, TO>::operator[](const key_type& from) const {
+    iterator it = find(from);
+    if (it == end()) {
+        return unmapped_value();
     }
-    return it;
+    return (*it).second;
 }
+
 
 #endif
