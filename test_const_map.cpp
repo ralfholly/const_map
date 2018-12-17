@@ -19,18 +19,18 @@ TEST(TestConstMap, Setup) {
 
 TEST(TestConstMap, TypicalUseCases) {
     const const_map<int, const char*>::value_type mappings[] = {
-        make_pair(0, "red"),
-        make_pair(1, "green"),
-        make_pair(2, "blue"),
+        make_pair(111, "red"),
+        make_pair(222, "green"),
+        make_pair(333, "blue"),
     };
 
     const_map<int, const char*> my_map(mappings, "not found");
 
     // Simple lookup.
-    EXPECT_EQ("green", my_map[1]);
+    EXPECT_EQ("green", my_map[222]);
 
     // Lookup via 'find'.
-    const_map<int, const char*>::iterator iter = my_map.find(2);
+    const_map<int, const char*>::iterator iter = my_map.find(333);
     EXPECT_TRUE(iter != my_map.end());
     EXPECT_EQ("blue", iter->second);
 
