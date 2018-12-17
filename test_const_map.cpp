@@ -29,7 +29,7 @@ TEST(TestConstMap, TypicalUseCases) {
     EXPECT_EQ("green", my_map[222]);
 
     // Lookup via 'find'.
-    const_map<int, const char*>::iterator iter = my_map.find(333);
+    const_map<int, const char*>::const_iterator iter = my_map.find(333);
     EXPECT_TRUE(iter != my_map.end());
     EXPECT_EQ("blue", iter->second);
 
