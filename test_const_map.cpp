@@ -24,7 +24,6 @@ TEST(TestConstMap, TypicalUseCases) {
         make_pair(2, "blue"),
     };
 
-    //const_map<int, const char*> my_map(mappings, ASIZE(mappings), "not found");
     const_map<int, const char*> my_map(mappings, "not found");
 
     // Simple lookup.

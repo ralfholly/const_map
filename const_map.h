@@ -44,15 +44,6 @@ inline const_map<FROM, TO>::const_map(const value_type (&mappings)[N], const map
 }
 
 
-template <typename FROM, typename TO>
-inline const_map<FROM, TO>::const_map(const value_type* mappings, size_t length, const mapped_type& unmapped_value)
-    : mappings_(mappings)
-    , length_(length)
-    , unmapped_value_(unmapped_value) {
-    check_preconditions();
-}
-
-
 template<typename FROM, typename TO>
 typename const_map<FROM, TO>::iterator const_map<FROM, TO>::begin() const {
     return &mappings_[0];
