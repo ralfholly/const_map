@@ -9,8 +9,6 @@ namespace test_const_map {
 
 using namespace std;
 
-#define ASIZE(a) (sizeof(a) / sizeof((a)[0]))
-
 
 TEST(TestConstMap, Setup) {
     EXPECT_EQ(3, 1 + 2);
@@ -22,9 +20,10 @@ TEST(TestConstMap, TypicalUseCases) {
         make_pair(111, "red"),
         make_pair(222, "green"),
         make_pair(333, "blue"),
+        make_pair(int(), "unmapped")
     };
 
-    const_map<int, const char*> my_map(mappings, "not found");
+    const const_map<int, const char*> my_map(mappings);
 
     // Simple lookup.
     EXPECT_EQ("green", my_map[222]);
@@ -35,7 +34,8 @@ TEST(TestConstMap, TypicalUseCases) {
     EXPECT_EQ("blue", iter->second);
 
     // No match found.
-    EXPECT_EQ(my_map.unmapped_value(), my_map[12345]);
+    EXPECT_EQ("unmapped", my_map[12345]);
+    EXPECT_EQ(my_map.end()->second, my_map[12345]);
 
     // Lookup via 'find' doesn't find a match.
     iter = my_map.find(12345);
