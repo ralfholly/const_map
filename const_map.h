@@ -24,6 +24,7 @@ public:
     template<size_t N>
     inline const_map(const value_type (&mappings)[N]);
     inline const_map(const value_type* begin, const value_type* end);
+    inline const_map(const value_type* begin, size_t nelem);
 
     inline bool operator==(const const_map& rhs) const;
 
@@ -57,6 +58,15 @@ template <typename From, typename To>
 const_map<From, To>::const_map(const value_type* begin, const value_type* end)
     : begin_(begin)
     , end_(end)
+{
+    check_preconditions();
+}
+
+
+template <typename From, typename To>
+const_map<From, To>::const_map(const value_type* begin, size_t nelem)
+    : begin_(begin)
+    , end_(begin + nelem)
 {
     check_preconditions();
 }
