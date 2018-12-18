@@ -12,33 +12,26 @@
 //
 // Example:
 //
-//     #define ASIZE(array) (sizeof(array) / sizeof(array[0]))
-//
 //     static const const_map<int, const char*>::value_type COLOR_STR[] = {
 //         { 111, "red"   },
 //         { 222, "green" },
 //         { 333, "blue"  },
-//         {  -1, nullptr },    // Sentinel.
 //     };
 //
-//     const_map<int, const char*> color_strings(COLOR_STR,
-//         ASIZE(COLOR_STR) - 1 /* excl. sentinel */);
+//     const_map<int, const char*> color_strings(COLOR_STR);
 //
 //     // Simple lookup.
 //     EXPECT_EQ("green", color_strings[222]);
 //
-//     // No match found.
-//     EXPECT_EQ(nullptr, color_strings[12345]);
-//     EXPECT_EQ(color_strings.end()->second, color_strings[12345]);
-//     EXPECT_EQ(nullptr, color_strings[999]);
-//
 //     // Lookup via 'find'.
-//     auto iter = color_strings.find(12345);
-//     EXPECT_TRUE(iter == color_strings.end());
-//     iter = color_strings.find(999);
+//     auto iter = color_strings.find(333);
+//     EXPECT_TRUE(iter != color_strings.end());
+//     EXPECT_EQ("blue", iter->second);
+//
+//     // Lookup via 'find' failed.
+//     iter = color_strings.find(12345);
 //     EXPECT_TRUE(iter == color_strings.end());
 //
-
 template <typename From, typename To>
 class const_map {
 public:
