@@ -3,19 +3,30 @@
 
 #include <algorithm>
 #include <cassert>
-#include <utility>
 
 
 template <typename FROM, typename TO>
 class const_map {
 public:
-    typedef std::pair<FROM, TO> value_type;
+    template<typename T1, typename T2>
+    struct simple_pair {
+        T1 first;
+        T2 second;
+        bool operator<(const simple_pair& rhs) const {
+            return this->first < rhs.first;
+        }
+    };
+    typedef simple_pair<FROM, TO> value_type;
     typedef FROM key_type;
     typedef TO mapped_type;
     typedef const value_type* const_iterator;
 
     template<size_t N>
     inline const_map(const value_type (&mappings)[N]);
+    // TODO:
+    inline const_map(const value_type* mappings, size_t mappings_size);
+
+
     inline const_iterator find(const key_type& from) const;
     inline const mapped_type& operator[](const key_type& from) const;
 
@@ -74,7 +85,11 @@ size_t const_map<FROM, TO>::size() const {
 
 template <typename FROM, typename TO>
 const typename const_map<FROM, TO>::value_type* const_map<FROM, TO>::find(const key_type& from) const {
-    const_iterator it = std::lower_bound(begin(), end(), std::make_pair(from, TO()));
+    const simple_pair<FROM, TO> search_value = {
+        from,
+        TO()
+    };
+    const_iterator it = std::lower_bound(begin(), end(), search_value);
     return it;
 }
 

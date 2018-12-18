@@ -10,20 +10,25 @@ namespace test_const_map {
 using namespace std;
 
 
-TEST(TestConstMap, Setup) {
-    EXPECT_EQ(3, 1 + 2);
-}
+const const_map<int, const char*>::value_type colors_as_strings[] = {
+    { 111, "red" },
+    { 222, "green" },
+    { 333, "blue" },
+    { int(), "unmapped" }
+};
 
 
 TEST(TestConstMap, TypicalUseCases) {
+#if 0
     const const_map<int, const char*>::value_type mappings[] = {
         make_pair(111, "red"),
         make_pair(222, "green"),
         make_pair(333, "blue"),
-        make_pair(int(), "unmapped")
+        {}
     };
+#endif
 
-    const const_map<int, const char*> my_map(mappings);
+    const const_map<int, const char*> my_map(colors_as_strings);
 
     // Simple lookup.
     EXPECT_EQ("green", my_map[222]);
