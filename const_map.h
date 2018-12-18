@@ -18,7 +18,7 @@
 //         { 111, "red"   },
 //         { 222, "green" },
 //         { 333, "blue"  },
-//         { 999, nullptr },    // Sentinel.
+//         {  -1, nullptr },    // Sentinel.
 //     };
 //
 //     const_map<int, const char*> color_strings(COLOR_STR,

@@ -22,7 +22,10 @@ TEST(TestConstMap, HelloConstMap) {
     // Simple lookup.
     EXPECT_EQ("green", color_strings[222]);
 
-    // No match found -> undefined behavior!
+    // When op[] is used and there is no match, we get undefined behavior!
+    // See 'WithSentinel' below for how sentinels can make such cases robust.
+    //
+    // This yields undefined behavior, just like array out-of-bounds access:
     // const char* str = color_strings[12345]);
 
     // Lookup via 'find'.
