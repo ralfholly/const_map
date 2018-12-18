@@ -5,7 +5,7 @@
 #include <cassert>
 
 
-template <typename FROM, typename TO>
+template <typename From, typename To>
 class const_map {
 public:
     template<typename T1, typename T2>
@@ -16,9 +16,9 @@ public:
             return this->first < rhs.first;
         }
     };
-    typedef simple_pair<FROM, TO> value_type;
-    typedef FROM key_type;
-    typedef TO mapped_type;
+    typedef simple_pair<From, To> value_type;
+    typedef From key_type;
+    typedef To mapped_type;
     typedef const value_type* const_iterator;
 
     template<size_t N>
@@ -36,7 +36,7 @@ public:
     inline const_iterator cend() const;
     inline size_t size() const;
 
-private:
+protected:
     inline void check_preconditions();
 
     const_iterator begin_;
@@ -44,80 +44,80 @@ private:
 };
 
 
-template <typename FROM, typename TO>
+template <typename From, typename To>
 template<size_t N>
-const_map<FROM, TO>::const_map(const value_type (&mappings)[N])
+const_map<From, To>::const_map(const value_type (&mappings)[N])
     : begin_(&mappings[0])
-    , end_(&mappings[N - 1]) {
+    , end_(&mappings[N]) {
     check_preconditions();
 }
 
 
-template <typename FROM, typename TO>
-const_map<FROM, TO>::const_map(const value_type* begin, const value_type* end)
+template <typename From, typename To>
+const_map<From, To>::const_map(const value_type* begin, const value_type* end)
     : begin_(begin)
-    , end_(end - 1)
+    , end_(end)
 {
     check_preconditions();
 }
 
 
-template <typename FROM, typename TO>
-bool const_map<FROM, TO>::operator==(const const_map& rhs) const {
+template <typename From, typename To>
+bool const_map<From, To>::operator==(const const_map& rhs) const {
     return (this->begin_ == rhs.begin_) and (this->end_ == rhs.end_);
 }
 
 
-template<typename FROM, typename TO>
-typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::begin() const {
+template <typename From, typename To>
+typename const_map<From, To>::const_iterator const_map<From, To>::begin() const {
     return begin_;
 }
 
 
-template<typename FROM, typename TO>
-typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::end() const {
+template <typename From, typename To>
+typename const_map<From, To>::const_iterator const_map<From, To>::end() const {
     return end_;
 }
 
 
-template<typename FROM, typename TO>
-typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::cbegin() const {
+template <typename From, typename To>
+typename const_map<From, To>::const_iterator const_map<From, To>::cbegin() const {
     return begin_;
 }
 
 
-template<typename FROM, typename TO>
-typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::cend() const {
+template <typename From, typename To>
+typename const_map<From, To>::const_iterator const_map<From, To>::cend() const {
     return end_;
 }
 
 
-template<typename FROM, typename TO>
-size_t const_map<FROM, TO>::size() const {
+template <typename From, typename To>
+size_t const_map<From, To>::size() const {
     return end_ - begin_;
 }
 
 
-template <typename FROM, typename TO>
-const typename const_map<FROM, TO>::value_type* const_map<FROM, TO>::find(const key_type& from) const {
-    const simple_pair<FROM, TO> search_value = {
+template <typename From, typename To>
+const typename const_map<From, To>::value_type* const_map<From, To>::find(const key_type& from) const {
+    const simple_pair<From, To> search_value = {
         from,
-        TO()
+        To()
     };
     const_iterator it = std::lower_bound(begin(), end(), search_value);
     return it;
 }
 
 
-template <typename FROM, typename TO>
-const typename const_map<FROM, TO>::mapped_type& const_map<FROM, TO>::operator[](const key_type& from) const {
+template <typename From, typename To>
+const typename const_map<From, To>::mapped_type& const_map<From, To>::operator[](const key_type& from) const {
     const_iterator it = find(from);
     return (*it).second;
 }
 
 
-template <typename FROM, typename TO>
-void const_map<FROM, TO>::check_preconditions() {
+template <typename From, typename To>
+void const_map<From, To>::check_preconditions() {
 #ifndef NDEBUG
     assert(begin_ != 0);
     assert(end_ != 0);
@@ -126,9 +126,6 @@ void const_map<FROM, TO>::check_preconditions() {
     for (; it != end(); ++it, ++prev) {
         assert((*it).first > (*prev).first); // Keys must be in sorted, in ascending order.
     }
-    // Sentinel check.
-    const FROM defval = FROM();
-    assert(!((*it).first < defval) && !(defval < (*it).first)); // Last key must be key's default value.
 #endif
 }
 
