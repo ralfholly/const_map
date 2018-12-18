@@ -39,47 +39,47 @@ public:
 private:
     inline void check_preconditions();
 
-    const_iterator mappings_;
-    size_t length_;
+    const_iterator begin_;
+    const_iterator end_;
 };
 
 
 template <typename FROM, typename TO>
 template<size_t N>
 inline const_map<FROM, TO>::const_map(const value_type (&mappings)[N])
-    : mappings_(mappings)
-    , length_(N) {
+    : begin_(&mappings[0])
+    , end_(&mappings[N - 1]) {
     check_preconditions();
 }
 
 
 template<typename FROM, typename TO>
 typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::begin() const {
-    return &mappings_[0];
+    return begin_;
 }
 
 
 template<typename FROM, typename TO>
 typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::end() const {
-    return &mappings_[length_ - 1];
+    return end_;
 }
 
 
 template<typename FROM, typename TO>
 typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::cbegin() const {
-    return &mappings_[0];
+    return begin_;
 }
 
 
 template<typename FROM, typename TO>
 typename const_map<FROM, TO>::const_iterator const_map<FROM, TO>::cend() const {
-    return &mappings_[length_ - 1];
+    return end_;
 }
 
 
 template<typename FROM, typename TO>
 size_t const_map<FROM, TO>::size() const {
-    return length_ - 1;
+    return end_ - begin_;
 }
 
 
@@ -104,8 +104,8 @@ const typename const_map<FROM, TO>::mapped_type& const_map<FROM, TO>::operator[]
 template <typename FROM, typename TO>
 void const_map<FROM, TO>::check_preconditions() {
 #ifndef NDEBUG
-    assert(mappings_ != 0);
-    assert(length_ != 0);
+    assert(begin_ != 0);
+    assert(end_ != 0);
     const_iterator prev = begin();
     const_iterator it = prev + 1;
     for (; it != end(); ++it, ++prev) {
