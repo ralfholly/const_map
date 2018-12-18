@@ -11,10 +11,10 @@ using namespace std;
 
 
 const const_map<int, const char*>::value_type COLORS_AS_STRINGS[] = {
-    { 111, "red" },
-    { 222, "green" },
-    { 333, "blue" },
-    { int(), "unmapped" }
+    { 111,    "red"      },
+    { 222,    "green"    },
+    { 333,    "blue"     },
+    { int(),  "unmapped" },   //  Sentinel.
 };
 
 
@@ -29,7 +29,7 @@ TEST(TestConstMap, HelloWorld) {
     EXPECT_EQ(color_strings.end()->second, color_strings[12345]);
 
     // Lookup via 'find'.
-    const_map<int, const char*>::const_iterator iter = color_strings.find(333);
+    auto iter = color_strings.find(333);
     EXPECT_TRUE(iter != color_strings.end());
     EXPECT_EQ("blue", iter->second);
 

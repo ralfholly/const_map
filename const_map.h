@@ -23,9 +23,9 @@ public:
 
     template<size_t N>
     inline const_map(const value_type (&mappings)[N]);
-    // TODO:
-    inline const_map(const value_type* mappings, size_t mappings_size);
+    inline const_map(const value_type* begin, const value_type* end);
 
+    inline bool operator==(const const_map& rhs) const;
 
     inline const_iterator find(const key_type& from) const;
     inline const mapped_type& operator[](const key_type& from) const;
@@ -46,10 +46,25 @@ private:
 
 template <typename FROM, typename TO>
 template<size_t N>
-inline const_map<FROM, TO>::const_map(const value_type (&mappings)[N])
+const_map<FROM, TO>::const_map(const value_type (&mappings)[N])
     : begin_(&mappings[0])
     , end_(&mappings[N - 1]) {
     check_preconditions();
+}
+
+
+template <typename FROM, typename TO>
+const_map<FROM, TO>::const_map(const value_type* begin, const value_type* end)
+    : begin_(begin)
+    , end_(end - 1)
+{
+    check_preconditions();
+}
+
+
+template <typename FROM, typename TO>
+bool const_map<FROM, TO>::operator==(const const_map& rhs) const {
+    return (this->begin_ == rhs.begin_) and (this->end_ == rhs.end_);
 }
 
 
