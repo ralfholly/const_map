@@ -61,6 +61,7 @@ public:
     inline const_map(const value_type* begin, size_t nelem);
 
     inline bool operator==(const const_map& rhs) const;
+    inline bool operator!=(const const_map& rhs) const;
 
     inline const_iterator find(const key_type& from) const;
     inline const mapped_type& operator[](const key_type& from) const;
@@ -74,8 +75,8 @@ public:
 protected:
     inline void check_preconditions();
 
-    const_iterator const begin_;
-    const_iterator const end_;
+    const_iterator begin_;
+    const_iterator end_;
 };
 
 
@@ -108,7 +109,13 @@ const_map<From, To>::const_map(const value_type* begin, size_t nelem)
 
 template <typename From, typename To>
 bool const_map<From, To>::operator==(const const_map& rhs) const {
-    return (this->begin_ == rhs.begin_) and (this->end_ == rhs.end_);
+    return (size() == rhs.size()) && (memcmp(begin(), rhs.begin(), size()) == 0);
+}
+
+
+template <typename From, typename To>
+bool const_map<From, To>::operator!=(const const_map& rhs) const {
+    return !(*this == rhs);
 }
 
 
@@ -165,6 +172,7 @@ void const_map<From, To>::check_preconditions() {
 #ifndef NDEBUG
     assert(begin_ != 0);
     assert(end_ != 0);
+    assert(end_ - begin_ != 0);
     const_iterator prev = begin();
     const_iterator it = prev + 1;
     for (; it != end(); ++it, ++prev) {

@@ -43,7 +43,7 @@ TEST(TestConstMap, WithSentinel) {
         { 111, "red"   },
         { 222, "green" },
         { 333, "blue"  },
-        { 999, nullptr },    // Sentinel.
+        {  -1, nullptr },    // Sentinel.
     };
 
     const_map<int, const char*> color_strings(COLOR_STR,
@@ -62,6 +62,67 @@ TEST(TestConstMap, WithSentinel) {
 }
 
 
+TEST(TestConstMap, SingleElement) {
+    static const const_map<double, int>::value_type DOUBLE_TO_INT[] = {
+        { 3.1416, 3 },
+    };
+
+    const_map<double, int> mapping(DOUBLE_TO_INT);
+    EXPECT_EQ(3, mapping[3.1416]);
+
+    auto iter = mapping.find(3.1416);
+    EXPECT_EQ(3, iter->second);
+
+    iter = mapping.find(42.1234);
+    EXPECT_EQ(mapping.cend(), iter);
+
+    static const const_map<double, int>::value_type DOUBLE_TO_INT2[] = {
+        { 3.1416, 3 },
+        {    0.0, 0 },  // Sentinel
+    };
+
+    const_map<double, int> mapping2(DOUBLE_TO_INT2, 1);
+    EXPECT_EQ(3, mapping[3.1416]);
+
+    iter = mapping.find(3.1416);
+    EXPECT_EQ(3, iter->second);
+
+    iter = mapping.find(42.1234);
+    EXPECT_EQ(mapping.cend(), iter);
+
+    EXPECT_EQ(mapping.cend()->second, mapping[123]);
+}
+
+
+TEST(TestConstMap, AssignmentAndEquality) {
+    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+        { 111, "red"   },
+        { 222, "green" },
+        { 333, "blue"  },
+    };
+
+    static const const_map<int, const char*>::value_type COLOR_STR2[] = {
+        { 444, "yellow"  },
+        { 555, "black"  },
+        { 666, "brown"  },
+    };
+
+    const_map<int, const char*> map1(COLOR_STR);
+    const_map<int, const char*> map2(COLOR_STR2);
+    EXPECT_NE(map1, map2);
+
+    const_map<int, const char*> map3(map1);
+    EXPECT_EQ(map3, map1);
+    EXPECT_NE(map3, map2);
+
+    map3 = map2;
+    EXPECT_NE(map3, map1);
+    EXPECT_EQ(map3, map2);
+
+    EXPECT_EQ("black", map3[555]);
+    EXPECT_EQ("black", map2[555]);
+}
+
+
 } // namespace test_const_map
 } // namespace testing
-
