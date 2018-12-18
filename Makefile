@@ -4,7 +4,7 @@ $(error "Please define GOOGLE_TEST_HOME, ie. `make GOOGLE_TEST_HOME=~/googletest
 endif
 endif
 
-TARGET := test_const_map
+TARGET := test/test_const_map
 
 GMOCK_INCLUDE_PATH = $(GOOGLE_TEST_HOME)/googlemock
 GTEST_INCLUDE_PATH = $(GOOGLE_TEST_HOME)/googletest
@@ -14,7 +14,7 @@ GTEST_LIBRARY_PATH = $(GOOGLE_TEST_HOME)/googlemock/gtest
 
 # 'override' allows you to pass in extra flags when invoking `make', ie.
 # make CPPFLAGS=-std=c++14
-override CPPFLAGS += -ansi -std=c++11 -W -Wall -g -pthread -I $(GTEST_INCLUDE_PATH)/include -I $(GMOCK_INCLUDE_PATH)/include
+override CPPFLAGS += -ansi -std=c++11 -W -Wall -g -pthread -I $(GTEST_INCLUDE_PATH)/include -I $(GMOCK_INCLUDE_PATH)/include -I .
 override LDFLAGS += -L$(GTEST_LIBRARY_PATH) -L$(GMOCK_LIBRARY_PATH)
 override LDLIBS += -lgtest_main -lgtest -lgmock
 
