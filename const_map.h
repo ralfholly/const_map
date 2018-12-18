@@ -4,6 +4,40 @@
 #include <algorithm>
 #include <cassert>
 
+// const_map -- a read-only, std::map-like associative array.
+//
+// A const_map is built around a given array of key/value pairs, sorted by key
+// in ascending order. Since element lookup is done via binary search, the time
+// complexity is O(log(n)).
+//
+// Example:
+//
+//     #define ASIZE(array) (sizeof(array) / sizeof(array[0]))
+//
+//     static const const_map<int, const char*>::value_type COLOR_STR[] = {
+//         { 111, "red"   },
+//         { 222, "green" },
+//         { 333, "blue"  },
+//         { 999, nullptr },    // Sentinel.
+//     };
+//
+//     const_map<int, const char*> color_strings(COLOR_STR,
+//         ASIZE(COLOR_STR) - 1 /* excl. sentinel */);
+//
+//     // Simple lookup.
+//     EXPECT_EQ("green", color_strings[222]);
+//
+//     // No match found.
+//     EXPECT_EQ(nullptr, color_strings[12345]);
+//     EXPECT_EQ(color_strings.end()->second, color_strings[12345]);
+//     EXPECT_EQ(nullptr, color_strings[999]);
+//
+//     // Lookup via 'find'.
+//     auto iter = color_strings.find(12345);
+//     EXPECT_TRUE(iter == color_strings.end());
+//     iter = color_strings.find(999);
+//     EXPECT_TRUE(iter == color_strings.end());
+//
 
 template <typename From, typename To>
 class const_map {
@@ -40,8 +74,8 @@ public:
 protected:
     inline void check_preconditions();
 
-    const_iterator begin_;
-    const_iterator end_;
+    const_iterator const begin_;
+    const_iterator const end_;
 };
 
 
