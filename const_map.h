@@ -169,7 +169,7 @@ void const_map<From, To>::check_preconditions() {
     const_iterator prev = begin();
     const_iterator it = prev + 1;
     for (; it != end(); ++it, ++prev) {
-        assert((*it).first > (*prev).first); // Keys must be orted, in ascending order.
+        assert((*it).first > (*prev).first); // Keys must be sorted, in ascending order.
     }
 #endif
 }
