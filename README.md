@@ -34,10 +34,11 @@ One problem with `const_map` is that using `operator[]` to look-up a non-exitent
 
 ```c++
 static const const_map<int, const char*>::value_type COLOR_STR[] = {
-    { 111, "red"   },
+    { 111, "red"   },  // <-- begin()
     { 222, "green" },
-    { 333, "blue"  },
-    {  -1, nullptr },    // Sentinel.
+    { 333, "blue"  },  // last element of mapping table
+    // Sentinel
+    {  -1, nullptr },  // <-- end()
 };
 
 const_map<int, const char*> color_strings(COLOR_STR,
@@ -55,4 +56,6 @@ iter = color_strings.find(999);
 EXPECT_TRUE(iter == color_strings.end());
 ```
 
-The only constraint on the sentinel value is that the key value is unique, that is, it's not already used in the mapping table. Further, the sentinel's value should also be unique such that its value can be unambigously interpreted as "not found". What the sentinel basically does is make the iterator that `end()` returns "dereferenceable".
+The only constraint on the sentinel value is that the key value must be unique, that is, it's not already used in the mapping table. Further, the sentinel's value should also be unique such that its value can be unambigously interpreted as "not found". 
+
+What the sentinel basically does is make the iterator that `end()` returns "dereferenceable".
