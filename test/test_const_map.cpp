@@ -43,10 +43,11 @@ TEST(TestConstMap, WithSentinel) {
     #define ASIZE(array) (sizeof(array) / sizeof(array[0]))
 
     static const const_map<int, const char*>::value_type COLOR_STR[] = {
-        { 111, "red"   },
+        { 111, "red"   },  // <-- begin()
         { 222, "green" },
-        { 333, "blue"  },
-        {  -1, nullptr },    // Sentinel.
+        { 333, "blue"  },  // last element of mapping table
+        // Sentinel
+        {  -1, nullptr },  // <-- end()
     };
 
     const_map<int, const char*> color_strings(COLOR_STR,
