@@ -48,8 +48,9 @@ public:
     typedef To mapped_type;
     typedef const value_type* const_iterator;
 
+    inline const_map();
     template<size_t N>
-    inline const_map(const value_type (&mappings)[N]);
+    explicit inline const_map(const value_type (&mappings)[N]);
     inline const_map(const value_type* begin, const value_type* end);
     inline const_map(const value_type* begin, size_t nelem);
 
@@ -65,8 +66,13 @@ public:
     inline const_iterator cend() const;
     inline size_t size() const;
 
-protected:
-    inline void check_preconditions();
+    template<size_t N>
+    inline void set_mapping(const value_type (&mappings)[N]);
+    inline void set_mapping(const value_type* begin, const value_type* end);
+    inline void set_mapping(const value_type* begin, size_t nelem);
+
+private:
+    inline void check_mappings();
 
     const_iterator begin_;
     const_iterator end_;
@@ -74,11 +80,20 @@ protected:
 
 
 template <typename From, typename To>
+const_map<From, To>::const_map()
+    : begin_(0)
+    , end_(0)
+{
+    ;
+}
+
+
+template <typename From, typename To>
 template<size_t N>
 const_map<From, To>::const_map(const value_type (&mappings)[N])
     : begin_(&mappings[0])
     , end_(&mappings[N]) {
-    check_preconditions();
+    check_mappings();
 }
 
 
@@ -87,7 +102,7 @@ const_map<From, To>::const_map(const value_type* begin, const value_type* end)
     : begin_(begin)
     , end_(end)
 {
-    check_preconditions();
+    check_mappings();
 }
 
 
@@ -96,7 +111,7 @@ const_map<From, To>::const_map(const value_type* begin, size_t nelem)
     : begin_(begin)
     , end_(begin + nelem)
 {
-    check_preconditions();
+    check_mappings();
 }
 
 
@@ -161,7 +176,32 @@ const typename const_map<From, To>::mapped_type& const_map<From, To>::operator[]
 
 
 template <typename From, typename To>
-void const_map<From, To>::check_preconditions() {
+template<size_t N>
+void const_map<From, To>::set_mapping(const value_type (&mappings)[N]) {
+    begin_ = &mappings[0];
+    end_ = &mappings[N];
+    check_mappings();
+}
+
+
+template <typename From, typename To>
+void const_map<From, To>::set_mapping(const value_type* begin, const value_type* end) {
+    begin_ = begin;
+    end_ = end;
+    check_mappings();
+}
+
+
+template <typename From, typename To>
+void const_map<From, To>::set_mapping(const value_type* begin, size_t nelem) {
+    begin_ = begin;
+    end_ = begin + nelem;
+    check_mappings();
+}
+
+
+template <typename From, typename To>
+void const_map<From, To>::check_mappings() {
 #ifndef NDEBUG
     assert(begin_ != 0);
     assert(end_ != 0);

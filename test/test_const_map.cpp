@@ -127,5 +127,34 @@ TEST(TestConstMap, AssignmentAndEquality) {
 }
 
 
+TEST(TestConstMap, DefaultCtorAndDelaySettingOfMapping) {
+    const_map<int, const char*> map;
+
+    EXPECT_EQ(0U, map.size());
+    EXPECT_EQ(map.begin(), map.end());
+
+    auto iter = map.find(555);
+    EXPECT_EQ(map.end(), iter);
+
+    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+        { 444, "yellow"  },
+        { 555, "black"  },
+        { 666, "brown"  },
+    };
+
+   map.set_mapping(COLOR_STR);
+   EXPECT_EQ("black", map[555]);
+
+   static const const_map<int, const char*>::value_type COLOR_STR2[] = {
+       { 111, "red"   },
+       { 222, "green" },
+       { 333, "blue"  },
+   };
+
+   map.set_mapping(COLOR_STR2, ASIZE(COLOR_STR2));
+   EXPECT_EQ("blue", map[333]);
+}
+
+
 } // namespace test_const_map
 } // namespace testing
