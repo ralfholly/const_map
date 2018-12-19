@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A `const_map` is built around a given array of key/value pairs (so-called mapping table), sorted by key in ascending order. Since element lookup is done via binary search, the time
+A `const_map` is built around a given array of key/value pairs (a so-called mapping table), sorted by key in ascending order. Since element lookup is done via binary search, the time
 complexity is O(log(n)).
 
 A typical example:
@@ -30,7 +30,7 @@ EXPECT_TRUE(iter == color_strings.end());
 
 ## Sentinels
 
-One problem with `const_map` is that using `operator[]` to lookup a non-exitent element yields undefined behavior. While some would say that this mirrors the behavior of general out-of-bounds array access, others would rather have a more resilient behavior. The latter can be achieved by adding a sentinel value to the mapping table:
+One problem with `const_map` is that using `operator[]` to look-up a non-exitent element yields undefined behavior. While some would say that this nicely mirrors the behavior of out-of-bounds array access, others would rather have a more resilient behavior. The latter can be achieved by adding an (otherwise unused) sentinel value to the mapping table:
 
 ```c++
 static const const_map<int, const char*>::value_type COLOR_STR[] = {
@@ -55,4 +55,4 @@ iter = color_strings.find(999);
 EXPECT_TRUE(iter == color_strings.end());
 ```
 
-The only constraint on the sentinel value is that the key value is unique, that is, it's not already used in the mapping table. Further, the sentinel's value should also be unique such that its value can be unambigously interpreted as "not found".
+The only constraint on the sentinel value is that the key value is unique, that is, it's not already used in the mapping table. Further, the sentinel's value should also be unique such that its value can be unambigously interpreted as "not found". What the sentinel basically does is make the iterator that `end()` returns "dereferenceable".
