@@ -51,8 +51,8 @@ public:
     const_map();
     template<size_t N>
         explicit  const_map(const value_type (&mappings)[N]);
-    const_map(const value_type* begin, const value_type* end);
-    const_map(const value_type* begin, size_t nelem);
+    const_map(const_iterator begin, const value_type* end);
+    const_map(const_iterator begin, size_t nelem);
 
     bool operator==(const const_map& rhs) const;
     bool operator!=(const const_map& rhs) const;
