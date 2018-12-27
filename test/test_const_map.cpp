@@ -1,7 +1,6 @@
-#include "gmock/gmock.h"
-
 #include "const_map.h"
 
+#include "gmock/gmock.h"
 #include <iostream>
 
 namespace testing {
