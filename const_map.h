@@ -48,31 +48,31 @@ public:
     typedef To mapped_type;
     typedef const value_type* const_iterator;
 
-    inline const_map();
+    const_map();
     template<size_t N>
-    explicit inline const_map(const value_type (&mappings)[N]);
-    inline const_map(const value_type* begin, const value_type* end);
-    inline const_map(const value_type* begin, size_t nelem);
+        explicit  const_map(const value_type (&mappings)[N]);
+    const_map(const value_type* begin, const value_type* end);
+    const_map(const value_type* begin, size_t nelem);
 
-    inline bool operator==(const const_map& rhs) const;
-    inline bool operator!=(const const_map& rhs) const;
+    bool operator==(const const_map& rhs) const;
+    bool operator!=(const const_map& rhs) const;
 
-    inline const_iterator find(const key_type& from) const;
-    inline const mapped_type& operator[](const key_type& from) const;
+    const_iterator find(const key_type& from) const;
+    const mapped_type& operator[](const key_type& from) const;
 
-    inline const_iterator begin() const;
-    inline const_iterator end() const;
-    inline const_iterator cbegin() const;
-    inline const_iterator cend() const;
-    inline size_t size() const;
+    const_iterator begin() const;
+    const_iterator end() const;
+    const_iterator cbegin() const;
+    const_iterator cend() const;
+    size_t size() const;
 
     template<size_t N>
-    inline void set_mapping(const value_type (&mappings)[N]);
-    inline void set_mapping(const value_type* begin, const value_type* end);
-    inline void set_mapping(const value_type* begin, size_t nelem);
+    void set_mapping(const value_type (&mappings)[N]);
+    void set_mapping(const value_type* begin, const value_type* end);
+    void set_mapping(const value_type* begin, size_t nelem);
 
 private:
-    inline void check_mappings();
+     void check_mappings();
 
     const_iterator begin_;
     const_iterator end_;
@@ -90,6 +90,7 @@ const_map<From, To>::const_map()
 
 template <typename From, typename To>
 template<size_t N>
+inline 
 const_map<From, To>::const_map(const value_type (&mappings)[N])
     : begin_(&mappings[0])
     , end_(&mappings[N]) {
@@ -98,6 +99,7 @@ const_map<From, To>::const_map(const value_type (&mappings)[N])
 
 
 template <typename From, typename To>
+inline
 const_map<From, To>::const_map(const value_type* begin, const value_type* end)
     : begin_(begin)
     , end_(end)
@@ -107,6 +109,7 @@ const_map<From, To>::const_map(const value_type* begin, const value_type* end)
 
 
 template <typename From, typename To>
+inline
 const_map<From, To>::const_map(const value_type* begin, size_t nelem)
     : begin_(begin)
     , end_(begin + nelem)
@@ -116,49 +119,65 @@ const_map<From, To>::const_map(const value_type* begin, size_t nelem)
 
 
 template <typename From, typename To>
-bool const_map<From, To>::operator==(const const_map& rhs) const {
+inline
+bool
+const_map<From, To>::operator==(const const_map& rhs) const {
     return (size() == rhs.size()) && (memcmp(begin(), rhs.begin(), size()) == 0);
 }
 
 
 template <typename From, typename To>
-bool const_map<From, To>::operator!=(const const_map& rhs) const {
+inline
+bool
+const_map<From, To>::operator!=(const const_map& rhs) const {
     return !(*this == rhs);
 }
 
 
 template <typename From, typename To>
-typename const_map<From, To>::const_iterator const_map<From, To>::begin() const {
+inline
+typename const_map<From, To>::const_iterator
+const_map<From, To>::begin() const {
     return begin_;
 }
 
 
 template <typename From, typename To>
-typename const_map<From, To>::const_iterator const_map<From, To>::end() const {
+inline
+typename const_map<From, To>::const_iterator
+const_map<From, To>::end() const {
     return end_;
 }
 
 
 template <typename From, typename To>
-typename const_map<From, To>::const_iterator const_map<From, To>::cbegin() const {
+inline
+typename const_map<From, To>::const_iterator
+const_map<From, To>::cbegin() const {
     return begin_;
 }
 
 
 template <typename From, typename To>
-typename const_map<From, To>::const_iterator const_map<From, To>::cend() const {
+inline
+typename const_map<From, To>::const_iterator
+const_map<From, To>::cend() const {
     return end_;
 }
 
 
 template <typename From, typename To>
-size_t const_map<From, To>::size() const {
+inline
+size_t
+const_map<From, To>::size() const {
     return end_ - begin_;
 }
 
 
 template <typename From, typename To>
-const typename const_map<From, To>::value_type* const_map<From, To>::find(const key_type& from) const {
+inline
+const typename const_map<From, To>::value_type*
+const_map<From, To>::find(const key_type& from) const {
     const simple_pair<From, To> search_value = {
         from,
         To()
@@ -169,7 +188,9 @@ const typename const_map<From, To>::value_type* const_map<From, To>::find(const 
 
 
 template <typename From, typename To>
-const typename const_map<From, To>::mapped_type& const_map<From, To>::operator[](const key_type& from) const {
+inline
+const typename const_map<From, To>::mapped_type&
+const_map<From, To>::operator[](const key_type& from) const {
     const_iterator it = find(from);
     return (*it).second;
 }
@@ -177,7 +198,9 @@ const typename const_map<From, To>::mapped_type& const_map<From, To>::operator[]
 
 template <typename From, typename To>
 template<size_t N>
-void const_map<From, To>::set_mapping(const value_type (&mappings)[N]) {
+inline
+void
+const_map<From, To>::set_mapping(const value_type (&mappings)[N]) {
     begin_ = &mappings[0];
     end_ = &mappings[N];
     check_mappings();
@@ -185,7 +208,9 @@ void const_map<From, To>::set_mapping(const value_type (&mappings)[N]) {
 
 
 template <typename From, typename To>
-void const_map<From, To>::set_mapping(const value_type* begin, const value_type* end) {
+inline
+void
+const_map<From, To>::set_mapping(const value_type* begin, const value_type* end) {
     begin_ = begin;
     end_ = end;
     check_mappings();
@@ -193,7 +218,9 @@ void const_map<From, To>::set_mapping(const value_type* begin, const value_type*
 
 
 template <typename From, typename To>
-void const_map<From, To>::set_mapping(const value_type* begin, size_t nelem) {
+inline
+void
+const_map<From, To>::set_mapping(const value_type* begin, size_t nelem) {
     begin_ = begin;
     end_ = begin + nelem;
     check_mappings();
@@ -201,7 +228,9 @@ void const_map<From, To>::set_mapping(const value_type* begin, size_t nelem) {
 
 
 template <typename From, typename To>
-void const_map<From, To>::check_mappings() {
+inline
+void
+const_map<From, To>::check_mappings() {
 #ifndef NDEBUG
     assert(begin_ != 0);
     assert(end_ != 0);
