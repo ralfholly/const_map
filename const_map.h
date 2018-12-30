@@ -42,6 +42,12 @@ public:
         bool operator<(const simple_pair& rhs) const {
             return this->first < rhs.first;
         }
+        bool operator==(const simple_pair& rhs) const {
+            return (this->first == rhs.first) and (this->second == rhs.second);
+        }
+        bool operator!=(const simple_pair& rhs) const {
+            return !(*this == rhs);
+        }
     };
     typedef simple_pair<From, To> value_type;
     typedef From key_type;
@@ -122,7 +128,19 @@ template <typename From, typename To>
 inline
 bool
 const_map<From, To>::operator==(const const_map& rhs) const {
-    return (size() == rhs.size()) && (memcmp(begin(), rhs.begin(), size()) == 0);
+    bool equal = false;
+    if (this->size() == rhs.size()) {
+        equal = true;
+        const_iterator it1 = this->begin();
+        const_iterator it2 = rhs.begin();
+        for (; it1 != this->end(); ++it1, ++it2) {
+            if (*it1 != *it2) {
+                equal = false;
+                break;
+            }
+        }
+    }
+    return equal;
 }
 
 
