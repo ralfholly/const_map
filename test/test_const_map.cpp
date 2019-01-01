@@ -39,7 +39,6 @@ TEST(TestConstMap, HelloConstMap) {
 
 
 TEST(TestConstMap, WithSentinel) {
-    #define ASIZE(array) (sizeof(array) / sizeof(array[0]))
 
     static const const_map<int, const char*>::value_type COLOR_STR[] = {
         { 111, "red"   },  // <-- begin()
@@ -49,8 +48,7 @@ TEST(TestConstMap, WithSentinel) {
         {  -1, nullptr },  // <-- end()
     };
 
-    const_map<int, const char*> color_strings(COLOR_STR,
-        ASIZE(COLOR_STR) - 1 /* excl. sentinel */);
+    const_map<int, const char*> color_strings(COLOR_STR, const_map_sentinel::yes);
 
     // No match found.
     EXPECT_EQ(nullptr, color_strings[12345]);
@@ -151,7 +149,7 @@ TEST(TestConstMap, DefaultCtorAndDelaySettingOfMapping) {
        { 333, "blue"  },
    };
 
-   map.set_mapping(COLOR_STR2, ASIZE(COLOR_STR2));
+   map.set_mapping(COLOR_STR2);
    EXPECT_EQ("blue", map[333]);
 }
 
