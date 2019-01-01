@@ -41,8 +41,7 @@ static const const_map<int, const char*>::value_type COLOR_STR[] = {
     {  -1, nullptr },  // <-- end()
 };
 
-const_map<int, const char*> color_strings(COLOR_STR,
-    ASIZE(COLOR_STR) - 1 /* excl. sentinel */);
+const_map<int, const char*> color_strings(COLOR_STR, const_map_sentinel::yes);
 
 // No match found.
 EXPECT_EQ(nullptr, color_strings[12345]);
