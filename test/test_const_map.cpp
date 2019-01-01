@@ -154,5 +154,44 @@ TEST(TestConstMap, DefaultCtorAndDelaySettingOfMapping) {
 }
 
 
+TEST(TestConstMap, NonTrivialValueType) {
+    class Color {
+    public:
+        Color() : code_(-1) {
+        }
+        Color(int code) : code_(code) {
+        }
+        int getCode() const {
+            return code_;
+        }
+        bool operator==(const Color& rhs) const {
+            return code_ == rhs.code_;
+        }
+
+    private:
+        int code_;
+    };
+
+    static const const_map<int, Color>::value_type COLORS[] = {
+        { 111, Color(1) },
+        { 222, Color(2) },
+        { 333, Color(3) },
+        {   0, Color(0) },
+    };
+
+    const_map<int, Color> colors(COLORS, const_map_sentinel::yes);
+
+    EXPECT_EQ(2, colors[222].getCode());
+    EXPECT_EQ(3, colors[333].getCode());
+    EXPECT_EQ(0, colors[12345].getCode());
+
+    // Lookup requires default ctor Colors::Colors().
+    const_map<int, Color> colors2(COLORS, const_map_sentinel::yes);
+
+    // Equality comparison requires Colors::operator==().
+    EXPECT_EQ(colors, colors2);
+}
+
+
 } // namespace test_const_map
 } // namespace testing

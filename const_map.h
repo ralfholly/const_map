@@ -107,7 +107,7 @@ public:
     void set_mapping(const value_type* begin, const value_type* end, int sentinel = const_map_sentinel::no);
 
 private:
-     void check_mappings();
+    void check_mappings();
 
     const_iterator begin_;
     const_iterator end_;
@@ -117,8 +117,7 @@ private:
 template <typename From, typename To>
 const_map<From, To>::const_map()
     : begin_(0)
-    , end_(0)
-{
+    , end_(0) {
     ;
 }
 
