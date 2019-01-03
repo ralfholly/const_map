@@ -7,6 +7,7 @@ namespace testing {
 namespace test_const_map {
 
 using namespace std;
+using namespace approxion;
 
 
 TEST(TestConstMap, HelloConstMap) {

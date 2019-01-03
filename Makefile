@@ -18,7 +18,7 @@ override CPPFLAGS += -ansi -std=c++11 -W -Wall -g -pthread -I $(GTEST_INCLUDE_PA
 override LDFLAGS += -L$(GTEST_LIBRARY_PATH) -L$(GMOCK_LIBRARY_PATH)
 override LDLIBS += -lgtest_main -lgtest -lgmock
 
-.PHONY : all clean
+.PHONY : all clean clang-tidy
 
 all: test
 
@@ -26,6 +26,9 @@ $(TARGET): $(TARGET).cpp const_map.h
 
 test: $(TARGET)
 	./$<
+
+lint:
+	clang-tidy test/const_map.cpp --checks=bugprone-*,clang-analizer-*,cppcoreguidelines-* --header-filter=.* -- -I .
 
 clean:
 	rm -rf *.o $(TARGET)
