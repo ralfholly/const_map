@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cassert>
 
+namespace approxion {
 
 struct const_map_sentinel {
     static const int no = 0;
@@ -118,7 +119,6 @@ template <typename From, typename To>
 const_map<From, To>::const_map()
     : begin_(0)
     , end_(0) {
-    ;
 }
 
 
@@ -201,7 +201,7 @@ const_map<From, To>::size() const {
 
 
 template <typename From, typename To> inline
-const typename const_map<From, To>::value_type*
+typename const_map<From, To>::const_iterator
 const_map<From, To>::find(const key_type& from) const {
     const simple_pair<From, To> search_value = {
         from,
@@ -254,5 +254,6 @@ const_map<From, To>::check_mappings() {
 #endif
 }
 
+} // namespace approxion
 
 #endif
