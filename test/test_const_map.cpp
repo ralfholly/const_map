@@ -123,6 +123,13 @@ TEST(TestConstMap, AssignmentAndEquality) {
 
     EXPECT_EQ("black", map3[555]);
     EXPECT_EQ("black", map2[555]);
+
+    // Put in vector.
+    vector<const_map<int, const char*> > const_maps;
+    const_maps.push_back(map1);
+    const_maps.push_back(map2);
+    const_maps.push_back(map3);
+    EXPECT_EQ(3U, const_maps.size());
 }
 
 
