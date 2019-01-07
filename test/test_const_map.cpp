@@ -201,5 +201,23 @@ TEST(TestConstMap, NonTrivialValueType) {
 }
 
 
+TEST(TestConstMap, Lookup) {
+    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+        { 111, "red"   },
+        { 222, "green" },
+        { 333, "blue"  },
+    };
+
+    // 'lookup' doesn't require an instance.
+    auto iter = const_map<int, const char*>::lookup(COLOR_STR, 333);
+    EXPECT_TRUE(iter != nullptr);
+    EXPECT_EQ("blue", iter->second);
+
+    // 'lookup' doesn't find a match.
+    iter = const_map<int, const char*>::lookup(COLOR_STR, 12345);
+    EXPECT_TRUE(iter == nullptr);
+}
+
+
 } // namespace test_const_map
 } // namespace testing

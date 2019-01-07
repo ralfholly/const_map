@@ -63,6 +63,27 @@ struct const_map_sentinel {
 //     EXPECT_EQ(color_strings.end()->second, color_strings[12345]);
 //     EXPECT_EQ(nullptr, color_strings[999]);
 //
+// Static Lookup:
+//
+//     const_map comes with an overhead of two pointers, one to the beginning and
+//     another one to the end of the mapping table. If even this is too much,
+//     you can use the 'lookup' class method, which doesn't require an object:
+//
+//     static const const_map<int, const char*>::value_type COLOR_STR[] = {
+//         { 111, "red"   },
+//         { 222, "green" },
+//         { 333, "blue"  },
+//     };
+//
+//     // 'lookup' doesn't require an instance.
+//     auto iter = const_map<int, const char*>::lookup(COLOR_STR, 333);
+//     EXPECT_TRUE(iter != nullptr);
+//     EXPECT_EQ("blue", iter->second);
+//
+//     // 'lookup' doesn't find a match.
+//     iter = const_map<int, const char*>::lookup(COLOR_STR, 12345);
+//     EXPECT_TRUE(iter == nullptr);
+//
 
 template <typename From, typename To>
 class const_map {
@@ -96,6 +117,8 @@ public:
 
     const_iterator find(const key_type& from) const;
     const mapped_type& operator[](const key_type& from) const;
+    template<size_t N>
+    static const_iterator lookup(const value_type(&mapping)[N], const key_type& from);
 
     const_iterator begin() const;
     const_iterator end() const;
@@ -217,6 +240,19 @@ const typename const_map<From, To>::mapped_type&
 const_map<From, To>::operator[](const key_type& from) const {
     const_iterator it = find(from);
     return (*it).second;
+}
+
+
+template <typename From, typename To>
+template <size_t N> inline
+typename const_map<From, To>::const_iterator
+const_map<From, To>::lookup(const value_type(&mapping)[N], const key_type& from) {
+    const simple_pair<From, To> search_value = {
+        from,
+        To()
+    };
+    const_iterator it = std::lower_bound(&mapping[0], &mapping[N], search_value);
+    return (it != &mapping[N]) ? it : 0;
 }
 
 

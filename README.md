@@ -58,3 +58,25 @@ EXPECT_TRUE(iter == color_strings.end());
 The only constraint on the sentinel value is that the key value must be unique, that is, it's not already used in the mapping table. Further, the sentinel's value should also be unique such that its value can be unambigously interpreted as "not found". 
 
 What the sentinel basically does is make the iterator that `end()` returns "dereferenceable".
+
+
+## Static Lookup
+
+`const_map` comes with an overhead of two pointers, one to the beginning and another one to the end of the mapping table. If even this is too much, you can use the 'lookup' class method, which doesn't require an object:
+
+```c++
+static const const_map<int, const char*>::value_type COLOR_STR[] = {
+ { 111, "red"   },
+ { 222, "green" },
+ { 333, "blue"  },
+};
+
+// 'lookup' doesn't require an instance.
+auto iter = const_map<int, const char*>::lookup(COLOR_STR, 333);
+EXPECT_TRUE(iter != nullptr);
+EXPECT_EQ("blue", iter->second);
+
+// 'lookup' doesn't find a match.
+iter = const_map<int, const char*>::lookup(COLOR_STR, 12345);
+EXPECT_TRUE(iter == nullptr);
+```
