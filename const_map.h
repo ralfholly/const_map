@@ -20,35 +20,35 @@ struct const_map_sentinel {
 //
 // Example:
 //
-//     static const const_map<int, const char*>::value_type COLOR_STR[] = {
+//     static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
 //         { 111, "red"   },
 //         { 222, "green" },
 //         { 333, "blue"  },
 //     };
 //
-//     const_map<int, const char*> color_strings(COLOR_STR);
+//     const_map<int, const char*> color_names(COLOR_NAMES);
 //
 //     // Simple lookup.
-//     EXPECT_EQ("green", color_strings[222]);
+//     EXPECT_EQ("green", color_names[222]);
 //
 //     // Lookup via 'find'.
-//     auto iter = color_strings.find(333);
-//     EXPECT_TRUE(iter != color_strings.end());
+//     auto iter = color_names.find(333);
+//     EXPECT_TRUE(iter != color_names.end());
 //     EXPECT_EQ("blue", iter->second);
 //
 //     // Lookup via 'find' failed.
-//     iter = color_strings.find(12345);
-//     EXPECT_TRUE(iter == color_strings.end());
+//     iter = color_names.find(12345);
+//     EXPECT_TRUE(iter == color_names.end());
 //
 //     // When op[] is used and there is no match, we get undefined behavior!
 //     // See 'Sentinels' below for how sentinels can make such cases robust.
 //
 //     // This yields undefined behavior, just like array out-of-bounds access:
-//     const char* str = color_strings[12345]);
+//     const char* str = color_names[12345]);
 //
 // Sentinels:
 //
-//     static const const_map<int, const char*>::value_type COLOR_STR[] = {
+//     static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
 //         { 111, "red"   },  // <-- begin()
 //         { 222, "green" },
 //         { 333, "blue"  },  // last element of mapping table
@@ -56,12 +56,12 @@ struct const_map_sentinel {
 //         {  -1, nullptr },  // <-- end()
 //     };
 //
-//     const_map<int, const char*> color_strings(COLOR_STR, const_map_sentinel::yes);
+//     const_map<int, const char*> color_names(COLOR_NAMES, const_map_sentinel::yes);
 //
 //     // No match found.
-//     EXPECT_EQ(nullptr, color_strings[12345]);
-//     EXPECT_EQ(color_strings.end()->second, color_strings[12345]);
-//     EXPECT_EQ(nullptr, color_strings[999]);
+//     EXPECT_EQ(nullptr, color_names[12345]);
+//     EXPECT_EQ(color_names.end()->second, color_names[12345]);
+//     EXPECT_EQ(nullptr, color_names[999]);
 //
 // Static Lookup:
 //
@@ -69,19 +69,19 @@ struct const_map_sentinel {
 //     another one to the end of the mapping table. If even this is too much,
 //     you can use the 'lookup' class method, which doesn't require an object:
 //
-//     static const const_map<int, const char*>::value_type COLOR_STR[] = {
+//     static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
 //         { 111, "red"   },
 //         { 222, "green" },
 //         { 333, "blue"  },
 //     };
 //
 //     // 'lookup' doesn't require an instance.
-//     auto iter = const_map<int, const char*>::lookup(COLOR_STR, 333);
+//     auto iter = const_map<int, const char*>::lookup(COLOR_NAMES, 333);
 //     EXPECT_TRUE(iter != nullptr);
 //     EXPECT_EQ("blue", iter->second);
 //
 //     // 'lookup' doesn't find a match.
-//     iter = const_map<int, const char*>::lookup(COLOR_STR, 12345);
+//     iter = const_map<int, const char*>::lookup(COLOR_NAMES, 12345);
 //     EXPECT_TRUE(iter == nullptr);
 //
 

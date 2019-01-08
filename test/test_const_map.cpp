@@ -11,37 +11,37 @@ using namespace approxion;
 
 
 TEST(TestConstMap, HelloConstMap) {
-    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
         { 111, "red"   },
         { 222, "green" },
         { 333, "blue"  },
     };
 
-    const_map<int, const char*> color_strings(COLOR_STR);
+    const_map<int, const char*> color_names(COLOR_NAMES);
 
     // Simple lookup.
-    EXPECT_EQ("green", color_strings[222]);
+    EXPECT_EQ("green", color_names[222]);
 
     // When op[] is used and there is no match, we get undefined behavior!
     // See 'WithSentinel' below for how sentinels can make such cases robust.
     //
     // This yields undefined behavior, just like array out-of-bounds access:
-    // const char* str = color_strings[12345]);
+    // const char* str = color_names[12345]);
 
     // Lookup via 'find'.
-    auto iter = color_strings.find(333);
-    EXPECT_TRUE(iter != color_strings.end());
+    auto iter = color_names.find(333);
+    EXPECT_TRUE(iter != color_names.end());
     EXPECT_EQ("blue", iter->second);
 
     // Lookup via 'find' doesn't find a match.
-    iter = color_strings.find(12345);
-    EXPECT_TRUE(iter == color_strings.end());
+    iter = color_names.find(12345);
+    EXPECT_TRUE(iter == color_names.end());
 }
 
 
 TEST(TestConstMap, WithSentinel) {
 
-    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
         { 111, "red"   },  // <-- begin()
         { 222, "green" },
         { 333, "blue"  },  // last element of mapping table
@@ -49,18 +49,18 @@ TEST(TestConstMap, WithSentinel) {
         {  -1, nullptr },  // <-- end()
     };
 
-    const_map<int, const char*> color_strings(COLOR_STR, const_map_sentinel::yes);
+    const_map<int, const char*> color_names(COLOR_NAMES, const_map_sentinel::yes);
 
     // No match found.
-    EXPECT_EQ(nullptr, color_strings[12345]);
-    EXPECT_EQ(color_strings.end()->second, color_strings[12345]);
-    EXPECT_EQ(nullptr, color_strings[999]);
+    EXPECT_EQ(nullptr, color_names[12345]);
+    EXPECT_EQ(color_names.end()->second, color_names[12345]);
+    EXPECT_EQ(nullptr, color_names[999]);
 
     // Lookup via 'find'.
-    auto iter = color_strings.find(12345);
-    EXPECT_TRUE(iter == color_strings.end());
-    iter = color_strings.find(999);
-    EXPECT_TRUE(iter == color_strings.end());
+    auto iter = color_names.find(12345);
+    EXPECT_TRUE(iter == color_names.end());
+    iter = color_names.find(999);
+    EXPECT_TRUE(iter == color_names.end());
 }
 
 
@@ -97,20 +97,20 @@ TEST(TestConstMap, SingleElement) {
 
 
 TEST(TestConstMap, AssignmentAndEquality) {
-    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
         { 111, "red"   },
         { 222, "green" },
         { 333, "blue"  },
     };
 
-    static const const_map<int, const char*>::value_type COLOR_STR2[] = {
+    static const const_map<int, const char*>::value_type COLOR_NAMES2[] = {
         { 444, "yellow"  },
         { 555, "black"  },
         { 666, "brown"  },
     };
 
-    const_map<int, const char*> map1(COLOR_STR);
-    const_map<int, const char*> map2(COLOR_STR2);
+    const_map<int, const char*> map1(COLOR_NAMES);
+    const_map<int, const char*> map2(COLOR_NAMES2);
     EXPECT_NE(map1, map2);
 
     const_map<int, const char*> map3(map1);
@@ -142,22 +142,22 @@ TEST(TestConstMap, DefaultCtorAndDelaySettingOfMapping) {
     auto iter = map.find(555);
     EXPECT_EQ(map.end(), iter);
 
-    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
         { 444, "yellow"  },
         { 555, "black"  },
         { 666, "brown"  },
     };
 
-   map.set_mapping(COLOR_STR);
+   map.set_mapping(COLOR_NAMES);
    EXPECT_EQ("black", map[555]);
 
-   static const const_map<int, const char*>::value_type COLOR_STR2[] = {
+   static const const_map<int, const char*>::value_type COLOR_NAMES2[] = {
        { 111, "red"   },
        { 222, "green" },
        { 333, "blue"  },
    };
 
-   map.set_mapping(COLOR_STR2);
+   map.set_mapping(COLOR_NAMES2);
    EXPECT_EQ("blue", map[333]);
 }
 
@@ -202,20 +202,38 @@ TEST(TestConstMap, NonTrivialValueType) {
 
 
 TEST(TestConstMap, Lookup) {
-    static const const_map<int, const char*>::value_type COLOR_STR[] = {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
         { 111, "red"   },
         { 222, "green" },
         { 333, "blue"  },
     };
 
     // 'lookup' doesn't require an instance.
-    auto iter = const_map<int, const char*>::lookup(COLOR_STR, 333);
+    auto iter = const_map<int, const char*>::lookup(COLOR_NAMES, 333);
     EXPECT_TRUE(iter != nullptr);
     EXPECT_EQ("blue", iter->second);
 
     // 'lookup' doesn't find a match.
-    iter = const_map<int, const char*>::lookup(COLOR_STR, 12345);
+    iter = const_map<int, const char*>::lookup(COLOR_NAMES, 12345);
     EXPECT_TRUE(iter == nullptr);
+}
+
+
+TEST(TestConstMap, EnumKey) {
+    enum Colors {
+        COLOR_RED,
+        COLOR_GREEN,
+        COLOR_BLUE,
+        COLOR_PURPLE
+    };
+
+    static const const_map<enum Colors, const char*>::value_type COLOR_NAMES[] = {
+        { COLOR_RED, "red"     },
+        { COLOR_GREEN, "green" },
+        { COLOR_BLUE, "blue"   },
+    };
+    const_map<enum Colors, const char*> color_names(COLOR_NAMES);
+    EXPECT_EQ("blue", color_names[COLOR_BLUE]);
 }
 
 
