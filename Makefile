@@ -22,7 +22,7 @@ override LDLIBS += -lgtest_main -lgtest -lgmock
 
 all: test
 
-$(TARGET): $(TARGET).cpp const_map.h
+$(TARGET): $(TARGET).cpp test/external_mapping.cpp test/external_mapping.h const_map.h
 
 test: $(TARGET)
 	./$<

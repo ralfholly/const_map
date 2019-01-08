@@ -1,4 +1,5 @@
 #include "const_map.h"
+#include "external_mapping.h"
 
 #include "gmock/gmock.h"
 #include <iostream>
@@ -236,6 +237,11 @@ TEST(TestConstMap, EnumKey) {
     EXPECT_EQ("blue", color_names[COLOR_BLUE]);
 }
 
+
+TEST(TestConstMap, ExternalMapping) {
+    const_map<double, int> round_down(ROUND_DOWN);
+    EXPECT_EQ(2, round_down[2.22]);
+}
 
 } // namespace test_const_map
 } // namespace testing
