@@ -243,5 +243,54 @@ TEST(TestConstMap, ExternalMapping) {
     EXPECT_EQ(2, round_down[2.22]);
 }
 
+
+TEST(TestConstMap, RangeBasedConstructor) {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
+        { 111, "red"   },
+        { 222, "green" },
+        { 333, "blue"  },
+    };
+
+    const_map<int, const char*> color_names(&COLOR_NAMES[0], &COLOR_NAMES[3]);
+
+    // Simple lookup.
+    EXPECT_EQ("green", color_names[222]);
+
+    // Lookup via 'find'.
+    auto iter = color_names.find(333);
+    EXPECT_TRUE(iter != color_names.end());
+    EXPECT_EQ("blue", iter->second);
+
+    // Lookup via 'find' doesn't find a match.
+    iter = color_names.find(12345);
+    EXPECT_TRUE(iter == color_names.end());
+}
+
+
+TEST(TestConstMap, RangeBasedConstructorWithSentinel) {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
+        { 111, "red"   },  // <-- begin()
+        { 222, "green" },
+        { 333, "blue"  },  // last element of mapping table
+        // Sentinel
+        {  -1, nullptr },  // <-- end()
+    };
+
+    const_map<int, const char*> color_names(&COLOR_NAMES[0], &COLOR_NAMES[3]);
+
+    // Simple lookup.
+    EXPECT_EQ("green", color_names[222]);
+
+    // Lookup via 'find'.
+    auto iter = color_names.find(333);
+    EXPECT_TRUE(iter != color_names.end());
+    EXPECT_EQ("blue", iter->second);
+
+    // Lookup via 'find' doesn't find a match.
+    iter = color_names.find(12345);
+    EXPECT_TRUE(iter == color_names.end());
+}
+
+
 } // namespace test_const_map
 } // namespace testing

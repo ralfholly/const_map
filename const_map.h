@@ -6,12 +6,6 @@
 
 namespace approxion {
 
-struct const_map_sentinel {
-    static const int no = 0;
-    static const int yes = 1;
-};
-
-
 // const_map -- a read-only, std::map-like associative array.
 //
 // A const_map is built around a given array of key/value pairs, sorted by key
@@ -85,6 +79,11 @@ struct const_map_sentinel {
 //     EXPECT_TRUE(iter == nullptr);
 //
 
+struct const_map_sentinel {
+    static const int no = 0;
+    static const int yes = 1;
+};
+
 template <typename From, typename To>
 class const_map {
 public:
@@ -110,7 +109,7 @@ public:
     const_map();
     template<size_t N>
     explicit  const_map(const value_type (&mappings)[N], int sentinel = const_map_sentinel::no);
-    const_map(const_iterator begin, const value_type* end, int sentinel = const_map_sentinel::no);
+    const_map(const_iterator begin, const_iterator end);
 
     bool operator==(const const_map& rhs) const;
     bool operator!=(const const_map& rhs) const;
@@ -128,7 +127,7 @@ public:
 
     template<size_t N>
     void set_mapping(const value_type (&mappings)[N], int sentinel = const_map_sentinel::no);
-    void set_mapping(const value_type* begin, const value_type* end, int sentinel = const_map_sentinel::no);
+    void set_mapping(const_iterator begin, const_iterator end);
 
 private:
     void check_mappings();
@@ -155,9 +154,9 @@ const_map<From, To>::const_map(const value_type (&mappings)[N], int sentinel)
 
 
 template <typename From, typename To> inline
-const_map<From, To>::const_map(const value_type* begin, const value_type* end, int sentinel)
+const_map<From, To>::const_map(const_iterator begin, const_iterator end)
     : begin_(begin)
-    , end_(sentinel == const_map_sentinel::no ? end : end - 1) {
+    , end_(end) {
     check_mappings();
 }
 
@@ -268,9 +267,9 @@ const_map<From, To>::set_mapping(const value_type (&mappings)[N], int sentinel) 
 
 template <typename From, typename To> inline
 void
-const_map<From, To>::set_mapping(const value_type* begin, const value_type* end, int sentinel) {
+const_map<From, To>::set_mapping(const_iterator begin, const_iterator end) {
     begin_ = begin;
-    end_ = (sentinel == const_map_sentinel::no ? end : end - 1);
+    end_ = end;
     check_mappings();
 }
 
