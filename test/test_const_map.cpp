@@ -291,6 +291,25 @@ TEST(TestConstMap, RangeBasedConstructorWithSentinel) {
     EXPECT_TRUE(iter == color_names.end());
 }
 
+
+TEST(TestConstMap, WithGapsInKeyValues) {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
+        { 100, "red"   },
+        { 200, "green" },
+        { 300, "blue"  },
+    };
+
+    const_map<int, const char*> color_names(COLOR_NAMES);
+
+    // Simple lookup.
+    EXPECT_EQ("green", color_names[200]);
+
+    // Lookup via 'find' doesn't find a match.
+    auto iter = color_names.find(150);
+    EXPECT_TRUE(iter == color_names.end());
+}
+
+
 TEST(TestConstMap, StringKeyWithCustomCompareFunction) {
     struct CStringComp {
         bool operator()(const char* a, const char* b) {
@@ -317,23 +336,6 @@ TEST(TestConstMap, StringKeyWithCustomCompareFunction) {
     // Lookup via 'find' doesn't find a match.
     iter = upper_cases.find("foo");
     EXPECT_TRUE(iter == upper_cases.end());
-}
-
-TEST(TestConstMap, WithGapsInKeyValues) {
-    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
-        { 100, "red"   },
-        { 200, "green" },
-        { 300, "blue"  },
-    };
-
-    const_map<int, const char*> color_names(COLOR_NAMES);
-
-    // Simple lookup.
-    EXPECT_EQ("green", color_names[200]);
-
-    // Lookup via 'find' doesn't find a match.
-    auto iter = color_names.find(150);
-    EXPECT_TRUE(iter == color_names.end());
 }
 
 
