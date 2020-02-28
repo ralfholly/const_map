@@ -291,6 +291,33 @@ TEST(TestConstMap, RangeBasedConstructorWithSentinel) {
     EXPECT_TRUE(iter == color_names.end());
 }
 
+TEST(TestConstMap, StringKeyWithCustomCompareFunction) {
+    struct CStringComp {
+        bool operator()(const char* a, const char* b) {
+            return strcmp(a, b) < 0;
+        }
+    };
+
+    static const const_map<const char*, const char*, CStringComp>::value_type UPPER_CASES[] = {
+        { "blue", "BLUE"   },
+        { "green", "GREEN" },
+        { "red", "RED"   },
+    };
+
+    const_map<const char*, const char*, CStringComp> upper_cases(UPPER_CASES);
+
+    // Simple lookup.
+    EXPECT_EQ("GREEN", upper_cases["green"]);
+
+    // Lookup via 'find'.
+    auto iter = upper_cases.find("red");
+    EXPECT_TRUE(iter != upper_cases.end());
+    EXPECT_EQ("RED", iter->second);
+
+    // Lookup via 'find' doesn't find a match.
+    iter = upper_cases.find("foo");
+    EXPECT_TRUE(iter == upper_cases.end());
+}
 
 } // namespace test_const_map
 } // namespace testing
