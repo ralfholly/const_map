@@ -2,6 +2,7 @@
 #define CONST_MAP_H
 
 #include <algorithm>
+#include <functional>
 #include <cassert>
 
 // Version  Date        Remark
@@ -88,26 +89,30 @@ struct const_map_sentinel {
     static const int yes = 1;
 };
 
-template <typename From, typename To>
+template <typename From, typename To, typename KeyCompare = std::less<From> >
 class const_map {
 public:
+    typedef From key_type;
+    typedef To mapped_type;
+    typedef KeyCompare key_compare;
     template<typename T1, typename T2>
     struct simple_pair {
         T1 first;
         T2 second;
         bool operator<(const simple_pair& rhs) const {
-            return this->first < rhs.first;
+            key_compare comp;
+            return comp(this->first, rhs.first);
         }
         bool operator==(const simple_pair& rhs) const {
-            return (this->first == rhs.first) and (this->second == rhs.second);
+            key_compare comp;
+            return (!comp(this->first, rhs.first) && !comp(rhs.first, this->first)) && (this->second == rhs.second);
+            //return (this->first == rhs.first) and (this->second == rhs.second);
         }
         bool operator!=(const simple_pair& rhs) const {
             return !(*this == rhs);
         }
     };
     typedef simple_pair<From, To> value_type;
-    typedef From key_type;
-    typedef To mapped_type;
     typedef const value_type* const_iterator;
 
     const_map();
@@ -141,33 +146,33 @@ private:
 };
 
 
-template <typename From, typename To>
-const_map<From, To>::const_map()
+template <typename From, typename To, typename KeyCompare>
+const_map<From, To, KeyCompare>::const_map()
     : begin_(0)
     , end_(0) {
 }
 
 
-template <typename From, typename To>
+template <typename From, typename To, typename KeyCompare>
 template<size_t N> inline
-const_map<From, To>::const_map(const value_type (&mappings)[N], int sentinel)
+const_map<From, To, KeyCompare>::const_map(const value_type (&mappings)[N], int sentinel)
     : begin_(&mappings[0])
     , end_(sentinel == const_map_sentinel::no ? &mappings[N] : &mappings[N - 1]) {
     check_mappings();
 }
 
 
-template <typename From, typename To> inline
-const_map<From, To>::const_map(const_iterator begin, const_iterator end)
+template <typename From, typename To, typename KeyCompare> inline
+const_map<From, To, KeyCompare>::const_map(const_iterator begin, const_iterator end)
     : begin_(begin)
     , end_(end) {
     check_mappings();
 }
 
 
-template <typename From, typename To> inline
+template <typename From, typename To, typename KeyCompare> inline
 bool
-const_map<From, To>::operator==(const const_map& rhs) const {
+const_map<From, To, KeyCompare>::operator==(const const_map& rhs) const {
     bool equal = false;
     if (this->size() == rhs.size()) {
         equal = true;
@@ -184,51 +189,51 @@ const_map<From, To>::operator==(const const_map& rhs) const {
 }
 
 
-template <typename From, typename To> inline
+template <typename From, typename To, typename KeyCompare> inline
 bool
-const_map<From, To>::operator!=(const const_map& rhs) const {
+const_map<From, To, KeyCompare>::operator!=(const const_map& rhs) const {
     return !(*this == rhs);
 }
 
 
-template <typename From, typename To> inline
-typename const_map<From, To>::const_iterator
-const_map<From, To>::begin() const {
+template <typename From, typename To, typename KeyCompare> inline
+typename const_map<From, To, KeyCompare>::const_iterator
+const_map<From, To, KeyCompare>::begin() const {
     return begin_;
 }
 
 
-template <typename From, typename To> inline
-typename const_map<From, To>::const_iterator
-const_map<From, To>::end() const {
+template <typename From, typename To, typename KeyCompare> inline
+typename const_map<From, To, KeyCompare>::const_iterator
+const_map<From, To, KeyCompare>::end() const {
     return end_;
 }
 
 
-template <typename From, typename To> inline
-typename const_map<From, To>::const_iterator
-const_map<From, To>::cbegin() const {
+template <typename From, typename To, typename KeyCompare> inline
+typename const_map<From, To, KeyCompare>::const_iterator
+const_map<From, To, KeyCompare>::cbegin() const {
     return begin_;
 }
 
 
-template <typename From, typename To> inline
-typename const_map<From, To>::const_iterator
-const_map<From, To>::cend() const {
+template <typename From, typename To, typename KeyCompare> inline
+typename const_map<From, To, KeyCompare>::const_iterator
+const_map<From, To, KeyCompare>::cend() const {
     return end_;
 }
 
 
-template <typename From, typename To> inline
+template <typename From, typename To, typename KeyCompare> inline
 size_t
-const_map<From, To>::size() const {
+const_map<From, To, KeyCompare>::size() const {
     return end_ - begin_;
 }
 
 
-template <typename From, typename To> inline
-typename const_map<From, To>::const_iterator
-const_map<From, To>::find(const key_type& from) const {
+template <typename From, typename To, typename KeyCompare> inline
+typename const_map<From, To, KeyCompare>::const_iterator
+const_map<From, To, KeyCompare>::find(const key_type& from) const {
     const simple_pair<From, To> search_value = {
         from,
         To()
@@ -238,18 +243,18 @@ const_map<From, To>::find(const key_type& from) const {
 }
 
 
-template <typename From, typename To> inline
-const typename const_map<From, To>::mapped_type&
-const_map<From, To>::operator[](const key_type& from) const {
+template <typename From, typename To, typename KeyCompare> inline
+const typename const_map<From, To, KeyCompare>::mapped_type&
+const_map<From, To, KeyCompare>::operator[](const key_type& from) const {
     const_iterator it = find(from);
     return (*it).second;
 }
 
 
-template <typename From, typename To>
+template <typename From, typename To, typename KeyCompare>
 template <size_t N> inline
-typename const_map<From, To>::const_iterator
-const_map<From, To>::lookup(const value_type(&mapping)[N], const key_type& from) {
+typename const_map<From, To, KeyCompare>::const_iterator
+const_map<From, To, KeyCompare>::lookup(const value_type(&mapping)[N], const key_type& from) {
     const simple_pair<From, To> search_value = {
         from,
         To()
@@ -259,36 +264,37 @@ const_map<From, To>::lookup(const value_type(&mapping)[N], const key_type& from)
 }
 
 
-template <typename From, typename To>
+template <typename From, typename To, typename KeyCompare>
 template<size_t N> inline
 void
-const_map<From, To>::set_mapping(const value_type (&mappings)[N], int sentinel) {
+const_map<From, To, KeyCompare>::set_mapping(const value_type (&mappings)[N], int sentinel) {
     begin_ = &mappings[0];
     end_ = (sentinel == const_map_sentinel::no ? &mappings[N] : &mappings[N - 1]);
     check_mappings();
 }
 
 
-template <typename From, typename To> inline
+template <typename From, typename To, typename KeyCompare> inline
 void
-const_map<From, To>::set_mapping(const_iterator begin, const_iterator end) {
+const_map<From, To, KeyCompare>::set_mapping(const_iterator begin, const_iterator end) {
     begin_ = begin;
     end_ = end;
     check_mappings();
 }
 
 
-template <typename From, typename To> inline
+template <typename From, typename To, typename KeyCompare> inline
 void
-const_map<From, To>::check_mappings() {
+const_map<From, To, KeyCompare>::check_mappings() {
 #ifndef NDEBUG
     assert(begin_ != 0);
     assert(end_ != 0);
     assert(end_ - begin_ != 0);
+    key_compare comp;
     const_iterator prev = begin();
     const_iterator it = prev + 1;
     for (; it != end(); ++it, ++prev) {
-        assert((*it).first > (*prev).first); // Keys must be sorted, in ascending order.
+        assert(comp((*prev).first, (*it).first)); // Keys must be sorted, in ascending order.
     }
 #endif
 }
