@@ -4,6 +4,10 @@
 #include <algorithm>
 #include <cassert>
 
+// Version  Date        Remark
+// ---------------------------------------------------------------------------
+// 1.0.1    2020-02-28  Fixed bug in binary search (const_map::lookup)
+
 namespace approxion {
 
 // const_map -- a read-only, std::map-like associative array.
@@ -230,7 +234,7 @@ const_map<From, To>::find(const key_type& from) const {
         To()
     };
     const_iterator it = std::lower_bound(begin(), end(), search_value);
-    return it;
+    return !(it == end()) && (*it).first == from ? it : end();
 }
 
 
@@ -251,7 +255,7 @@ const_map<From, To>::lookup(const value_type(&mapping)[N], const key_type& from)
         To()
     };
     const_iterator it = std::lower_bound(&mapping[0], &mapping[N], search_value);
-    return (it != &mapping[N]) ? it : 0;
+    return !(it == &mapping[N]) && (*it).first == from ? it : 0;
 }
 
 

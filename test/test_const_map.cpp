@@ -292,5 +292,23 @@ TEST(TestConstMap, RangeBasedConstructorWithSentinel) {
 }
 
 
+TEST(TestConstMap, WithGapsInKeyValues) {
+    static const const_map<int, const char*>::value_type COLOR_NAMES[] = {
+        { 100, "red"   },
+        { 200, "green" },
+        { 300, "blue"  },
+    };
+
+    const_map<int, const char*> color_names(COLOR_NAMES);
+
+    // Simple lookup.
+    EXPECT_EQ("green", color_names[200]);
+
+    // Lookup via 'find' doesn't find a match.
+    auto iter = color_names.find(150);
+    EXPECT_TRUE(iter == color_names.end());
+}
+
+
 } // namespace test_const_map
 } // namespace testing

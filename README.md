@@ -1,5 +1,13 @@
 # const_map -- a read-only, std::map-like associative array.
 
+## History
+
+```
+Version  Date        Remark
+---------------------------------------------------------------------------
+1.0.1    2020-02-28  Fixed bug in binary search (const_map::lookup)
+```
+
 ## Introduction
 
 A `const_map` is built around a given array of key/value pairs (a so-called mapping table), sorted by key in ascending order. Since element lookup is done via binary search, the time
