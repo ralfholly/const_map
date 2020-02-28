@@ -6,6 +6,8 @@
 Version  Date        Remark
 ---------------------------------------------------------------------------
 1.0.1    2020-02-28  Fixed bug in binary search (const_map::lookup)
+1.1.0    2020-02-28  Added support for key compare function as 3rd template
+                     parameter
 ```
 
 ## Introduction
