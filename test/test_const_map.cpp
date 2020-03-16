@@ -339,5 +339,39 @@ TEST(TestConstMap, StringKeyWithCustomCompareFunction) {
 }
 
 
+
+#if __cplusplus >= 201103L
+TEST(TestConstMap, EnumToLambda) {
+
+    enum Colors {
+        COLOR_RED,
+        COLOR_GREEN,
+        COLOR_BLUE,
+        COLOR_PURPLE
+    };
+
+    static const const_map<enum Colors, std::function<const char*()>>::value_type COLOR_NAMES[] = {
+        { COLOR_RED, []() { return "RED"; } },
+        { COLOR_GREEN, []() { return "GREEN"; } },
+        { COLOR_BLUE, []() { return "RED"; } },
+    };
+
+    const_map<enum Colors, std::function<const char*()>> color_names(COLOR_NAMES);
+
+    // Simple lookup.
+    EXPECT_EQ("GREEN", color_names[COLOR_GREEN]());
+
+    // Lookup via 'find'.
+    auto iter = color_names.find(COLOR_RED);
+    EXPECT_TRUE(iter != color_names.end());
+    EXPECT_EQ("RED", iter->second());
+
+    // Lookup via 'find' doesn't find a match.
+    iter = color_names.find(COLOR_PURPLE);
+    EXPECT_TRUE(iter == color_names.end());
+}
+#endif
+
+
 } // namespace test_const_map
 } // namespace testing
